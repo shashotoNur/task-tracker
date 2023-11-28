@@ -1,9 +1,9 @@
 import os
 
-data_file = "task_data.txt"
+task_time_file = "task_time_invested.txt"
 
 def does_task_exist(task_name):
-    with open(data_file, "r") as file:
+    with open(task_time_file, "r") as file:
         lines = file.readlines()
     file.close()
 
@@ -20,7 +20,7 @@ def create_task(task_name):
         print(f"Task '{task_name}' already exists.")
         return
 
-    with open(data_file, "a") as file:
+    with open(task_time_file, "a") as file:
         file.write(f"{task_name},0\n")
     file.close()
 
@@ -33,7 +33,7 @@ def delete_task(task_name):
         print(f"Task '{task_name}' does not exist.")
         return
 
-    with open(data_file, "r") as file:
+    with open(task_time_file, "r") as file:
         lines = file.readlines()
     file.close()
 
@@ -43,13 +43,13 @@ def delete_task(task_name):
         if task_name not in line:
             new_lines.append(line)
 
-    with open(data_file, "w") as file:
+    with open(task_time_file, "w") as file:
         file.writelines(new_lines)
     file.close()
 
     print(f"Task '{task_name}' deleted successfully.")
 
-def add_time(task_name):
+def add_time_to_task(task_name):
     task_exists = does_task_exist(task_name)
 
     if not task_exists:
@@ -58,7 +58,7 @@ def add_time(task_name):
 
     time_added = int(input("Enter the time to add (in minutes): "))
 
-    with open(data_file, "r") as file:
+    with open(task_time_file, "r") as file:
         lines = file.readlines()
     file.close()
 
@@ -70,7 +70,7 @@ def add_time(task_name):
             lines[line_index] = f"{task_name},{new_time}\n"
             break
 
-    with open(data_file, "w") as file:
+    with open(task_time_file, "w") as file:
         file.writelines(lines)
     file.close()
 
@@ -88,8 +88,8 @@ def format_time(time_in_minutes):
     formatted_time += f"{minutes} minutes"
     return formatted_time
 
-def display_tasks():
-    with open(data_file, "r") as file:
+def display_task_times():
+    with open(task_time_file, "r") as file:
         lines = file.readlines()
     file.close()
 
@@ -106,12 +106,12 @@ def display_tasks():
         print(f"\t- {task_name}: {formatted_time}")
 
 def main():
-    if not os.path.exists(data_file):
-        with open(data_file, "a") as file:
+    if not os.path.exists(task_time_file):
+        with open(task_time_file, "a") as file:
             file.write("")
         file.close()
 
-    display_tasks()
+    display_task_times()
 
     while True:
         input("Press enter to continue...")
@@ -126,9 +126,9 @@ def main():
             delete_task(task_name)
         elif option == "3":
             task_name = input("Enter the task name: ")
-            add_time(task_name)
+            add_time_to_task(task_name)
         elif option == "4":
-            display_tasks()
+            display_task_times()
         elif option == "5":
             print("Exiting the task tracker.")
             break
