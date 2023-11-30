@@ -18,8 +18,7 @@ Task Tracker is a Python-based command line application designed to help users m
 ## Files
 
 1. **index.py**
-   - The main file orchestrating the program flow with a menu for task management, time tracking, and performance evaluation.
-
+   - The main file orchestrating the program flow with a menu for task management, total time tracking, and daily task evaluations
 2. **manage_tasks.py**
    - Functions for creating, deleting, editing tasks, and listing all tasks.
    - Invoked through the main menu option "1. Manage tasks" in `index.py`.
@@ -42,7 +41,7 @@ Task Tracker is a Python-based command line application designed to help users m
 
 To run the program, execute `index.py`. Follow the on-screen menu to manage tasks, track time, and evaluate performances.
 
-Make sure to check the `tasks_list.txt` file for task data and the `task_performances_<current_year>_<current_month>.txt` file for performance data.
+Make sure to check the `tasks_list.txt` file for task data and the `tasks_in_<current_year>_<current_month>.txt` file for performance data.
 
 ## Prerequisites
 
@@ -64,7 +63,7 @@ Task Tracker simplifies task management, time tracking, and performance evaluati
 
 - **Task Management:** Create, delete, edit, and list tasks effortlessly.
 - **Time Tracking:** Track time invested in each task.
-- **Performance Evaluation:** Evaluate task performances on a daily or overall basis.
+- **Daily Tasks Evaluation:** Evaluate task performances and time invested on a daily or overall basis.
 
 ## License
 
