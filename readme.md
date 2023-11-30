@@ -5,15 +5,15 @@ Task Tracker is a Python-based command line application designed to help users m
 ## Table of Contents
 
 - [Task Tracker](#task-tracker)
-	- [Table of Contents](#table-of-contents)
-	- [Files](#files)
-	- [Usage](#usage)
-	- [Prerequisites](#prerequisites)
-	- [How to Clone](#how-to-clone)
-	- [About](#about)
-		- [Why it is Useful](#why-it-is-useful)
-	- [License](#license)
-	- [Contributor](#contributor)
+  - [Table of Contents](#table-of-contents)
+  - [Files](#files)
+  - [Usage](#usage)
+  - [Prerequisites](#prerequisites)
+  - [How to Clone](#how-to-clone)
+  - [About](#about)
+    - [Why it is Useful](#why-it-is-useful)
+  - [License](#license)
+  - [Contributor](#contributor)
 
 ## Files
 
@@ -26,12 +26,12 @@ Task Tracker is a Python-based command line application designed to help users m
 
 3. **time_tracker.py**
    - Functionality for adding time to tasks and displaying time invested.
-   - Invoked through the main menu option "2. Manage time" in `index.py`.
+   - Invoked through the main menu option "2. Manage collective time" in `index.py`.
 
-4. **performance_tracker.py**
-   - Supports setting and displaying task performances.
+4. **daily_tracker.py**
+   - Supports setting and displaying task performances and time invested on current date.
    - Calculates overall performance for a day and within a specified date range.
-   - Invoked through the main menu option "3. Manage performances" in `index.py`.
+   - Invoked through the main menu option "3. Manage tasks" in `index.py`.
 
 5. **utils.py**
    - Utility functions shared across multiple files.

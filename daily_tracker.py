@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timedelta
-from utils import tasks_list_file, current_month_file, print_progress_bar
+from utils import tasks_list_file, current_month_file, print_progress_bar, format_time
+from time_tracker import add_time_to_task
 
 def get_task_relative_importance(task_name):
     importance = 0
@@ -17,7 +18,7 @@ def get_task_relative_importance(task_name):
     return importance / total_importance
 
 
-def set_task_performance(task_name, performance):
+def update_daily_task(task_name, performance, time):
     current_date = datetime.now().strftime("%d-%m-%Y")
 
     with open(current_month_file, "r") as file:
@@ -27,7 +28,8 @@ def set_task_performance(task_name, performance):
 
     task_is_to_be_written = False
     date_found = False
-    line_to_be_added = f"{task_name},{performance}"
+
+    line_to_be_added = f"{task_name},{performance},{time}"
 
     for lineNumber, line in enumerate(lines):
         new_lines.append(line)
@@ -43,19 +45,22 @@ def set_task_performance(task_name, performance):
 
         elif task_is_to_be_written and lineNumber == (len(lines)-1):
             new_lines.append(f"\n{line_to_be_added}")
-            task_is_to_be_written = False
+            add_time_to_task(task_name, time)
 
+            task_is_to_be_written = False
             print(f"Performance for task '{task_name}' set successfully.")
 
     if not date_found:
         new_lines.append(f"\n{current_date}\n{line_to_be_added}")
+        add_time_to_task(task_name, time)
+
         print(f"Performance for task '{task_name}' set successfully.")
 
     with open(current_month_file, "w") as file:
         file.writelines(new_lines)
 
 
-def display_performances(date):
+def display_tasks(date):
     date_object = datetime.strptime(date, "%d-%m-%Y")
     next_date_object = date_object + timedelta(days=1)
 
@@ -66,7 +71,7 @@ def display_performances(date):
     with open(current_month_file, "r") as file:
         lines = file.readlines()
 
-    print(f"Task performances for {date}:")
+    print(f"Tasks on {date}:")
     for line in lines:
         if date in line:
             found_date = True
@@ -76,7 +81,8 @@ def display_performances(date):
             if task_data[0] == '':
                 break
 
-            print(f"\t- {task_data[0]}: {task_data[1]}%")
+            time = format_time(int(task_data[2]))
+            print(f"\t- {task_data[0]} at {task_data[1]}% for {time}")
             tasks_exist = True
 
         elif next_date in line:
@@ -119,21 +125,25 @@ def get_performance_of_a_range_of_days(start_date, end_date):
 
     return total_performance / num_days
 
-def PerformanceTracker():
+def DailyTracker():
     today = datetime.now().strftime("%d-%m-%Y")
-    display_performances(today)
+    display_tasks(today)
+
     input("Press enter to continue...")
 
-    option = input("\nPERFORMANCE TRACKER - Choose an option:\n1. Set performance for a task\n2. Display performance\n3. Get overall performance of a day\n4. Display overall performance within a date range\nEnter your choice: ")
+    option = input("\nDAILY TRACKER - Choose an option:\n1. Set performance and time invested for a task\n2. Display performance\n3. Get overall performance of a day\n4. Display overall performance within a date range\nEnter your choice: ")
 
     if option == "1":
         task_name = input("Enter the task name: ")
-        performance = int(input("Enter the performance for the task (0-100): "))
 
-        set_task_performance(task_name, performance)
+        performance = int(input("Enter the performance for the task (0-100): "))
+        time = int(input("Enter the time invested today: "))
+
+        update_daily_task(task_name, performance, time)
+
     elif option == "2":
-        date = input("Enter the date of the task you want to display (DD-MM-YYYY): ")
-        display_performances(date)
+        date = input("Enter the date of the tasks you want to display (DD-MM-YYYY): ")
+        display_tasks(date)
 
     elif option == "3":
         date = input("Enter the date of the performance you want to get (DD-MM-YYYY): ")

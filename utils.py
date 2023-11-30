@@ -1,7 +1,7 @@
 from datetime import datetime
 
 tasks_list_file = "tasks_list.txt"
-current_month_file = f"task_performances_{datetime.now().strftime('%Y_%m')}.txt"
+current_month_file = f"tasks_in_{datetime.now().strftime('%Y_%m')}.txt"
 
 def does_task_exist(task_name):
     with open(tasks_list_file, "r") as file:

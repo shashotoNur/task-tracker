@@ -1,7 +1,7 @@
 import os
 from manage_tasks import TaskManager
 from time_tracker import TimeTracker
-from performance_tracker import PerformanceTracker
+from daily_tracker import DailyTracker
 from utils import tasks_list_file, current_month_file
 
 def ensure_data_file_exists():
@@ -21,7 +21,7 @@ def main():
 		if not first_iteration:
 			input("Press enter to continue...")
 
-		option = input("\nMENU - Choose an option\n1. Manage tasks\n2. Manage time\n3. Manage performances\n4. Exit\nEnter your choice: ")
+		option = input("\nMENU - Choose an option\n1. Manage tasks\n2. Manage collective time\n3. Manage daily task\n4. Exit\nEnter your choice: ")
 
 		if option == "1":
 			TaskManager()
@@ -30,12 +30,12 @@ def main():
 			TimeTracker()
 
 		elif option == "3":
-			PerformanceTracker()
+			DailyTracker()
 
 		elif option == "4":
 			print("Program terminated...")
 			break
-		
+
 		else:
 			print("Invalid option. Please choose between 1 to 4.")
 
