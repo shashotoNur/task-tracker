@@ -1,5 +1,5 @@
 from utils import tasks_list_file, does_task_exist
-from utils import format_time
+from utils import format_time, print_progress_bar
 
 def add_time_to_task(task_name, time_added):
     task_exists = does_task_exist(task_name)
@@ -25,7 +25,7 @@ def add_time_to_task(task_name, time_added):
 
                 target = input(f"Set another for task '{task_name}' ('0' to reset): ")
 
-            updated_line = f"{task_name},{importance},{new_time},{target}"
+            updated_line = f"{task_name},{importance},{new_time},{target}\n"
             lines[line_index] = updated_line
 
             break
@@ -48,9 +48,16 @@ def display_task_times():
     for line in lines:
         data = line.strip().split(",")
         task_name, importance, time_invested, target = data
+        time_invested = int(time_invested)
+        target = int(target)
 
-        formatted_time = format_time(int(time_invested))
-        print(f"\t- {task_name}: {formatted_time}")
+
+        formatted_time = format_time(time_invested)
+        if target != 0:
+            print(f"\t- {task_name}: {formatted_time} ", end="")
+            print_progress_bar((time_invested/target)*100, 20)
+        else:
+            print(f"\t- {task_name}: {formatted_time} ")
 
 def TimeTracker():
     display_task_times()

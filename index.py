@@ -14,32 +14,33 @@ def ensure_data_file_exists():
             file.write("")
 
 def main():
-	ensure_data_file_exists()
-	first_iteration = True
+    ensure_data_file_exists()
+    first_iteration = True
 
-	while True:
-		if not first_iteration:
-			input("Press enter to continue...")
+    while True:
+        if not first_iteration:
+            input("Press enter to continue...")
+        os.system('clear')
 
-		option = input("\nMENU - Choose an option\n1. Manage tasks\n2. Manage collective time\n3. Manage daily task\n4. Exit\nEnter your choice: ")
+        option = input("\nMENU - Choose an option\n1. Manage tasks\n2. Manage collective time\n3. Manage daily task\n4. Exit\nEnter your choice: ")
 
-		if option == "1":
-			TaskManager()
+        if option == "1":
+            TaskManager()
 
-		elif option == "2":
-			TimeTracker()
+        elif option == "2":
+            TimeTracker()
 
-		elif option == "3":
-			DailyTracker()
+        elif option == "3":
+            DailyTracker()
 
-		elif option == "4":
-			print("Program terminated...")
-			break
+        elif option == "4":
+            print("Program terminated...")
+            break
 
-		else:
-			print("Invalid option. Please choose between 1 to 4.")
+        else:
+            print("Invalid option. Please choose between 1 to 4.")
 
-		first_iteration = False
+        first_iteration = False
 
 if __name__ == "__main__":
     main()

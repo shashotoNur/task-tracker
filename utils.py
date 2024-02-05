@@ -42,4 +42,4 @@ def print_progress_bar(progress, length=40):
     bar_length = int(length * progress/100)
     bar = "=" * bar_length + "." * (length - bar_length)
 
-    print(f"[{bar}] {progress}%")
+    print(f"[{bar}] {progress:.2f}%")

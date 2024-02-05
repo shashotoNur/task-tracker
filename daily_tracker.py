@@ -1,4 +1,5 @@
 import os
+from termplot import Plot
 from datetime import datetime, timedelta
 from utils import tasks_list_file, current_month_file, print_progress_bar, format_time
 from time_tracker import add_time_to_task
@@ -116,14 +117,23 @@ def get_performance_of_a_range_of_days(start_date, end_date):
     start_date_obj = datetime.strptime(start_date, '%d-%m-%Y')
     end_date_obj = datetime.strptime(end_date, '%d-%m-%Y')
 
-    num_days = (end_date_obj - start_date_obj).days + 1
+    num_of_days = (end_date_obj - start_date_obj).days + 1
+    dates, perf = [], []
+
+    for i in range(num_of_days):
+        current_date = start_date_obj + timedelta(days=i)
+        dates.append(int(current_date.strftime("%d")))
+
     total_performance = 0
 
     while start_date_obj <= end_date_obj:
-        total_performance += get_performance_of_day(start_date_obj.strftime("%d-%m-%Y"))
+        performance = get_performance_of_day(start_date_obj.strftime("%d-%m-%Y"))
+        perf.append(performance)
+        total_performance += performance
         start_date_obj += timedelta(days=1)
 
-    return total_performance / num_days
+    Plot(dates, perf)
+    return total_performance / num_of_days
 
 def DailyTracker():
     today = datetime.now().strftime("%d-%m-%Y")
@@ -131,7 +141,7 @@ def DailyTracker():
 
     input("Press enter to continue...")
 
-    option = input("\nDAILY TRACKER - Choose an option:\n1. Set performance and time invested for a task\n2. Display performance\n3. Get overall performance of a day\n4. Display overall performance within a date range\nEnter your choice: ")
+    option = input("\nDAILY TRACKER - Choose an option:\n1. Set performance and time invested for a task\n2. Get overall performance of a day\n3. Display overall performance within a date range\nEnter your choice: ")
 
     if option == "1":
         task_name = input("Enter the task name: ")
@@ -142,17 +152,13 @@ def DailyTracker():
         update_daily_task(task_name, performance, time)
 
     elif option == "2":
-        date = input("Enter the date of the tasks you want to display (DD-MM-YYYY): ")
-        display_tasks(date)
-
-    elif option == "3":
         date = input("Enter the date of the performance you want to get (DD-MM-YYYY): ")
         performance = get_performance_of_day(date)
 
         print(f"Performance on {date}:")
         print_progress_bar(performance)
 
-    elif option == "4":
+    elif option == "3":
         start_date = input("Start date: ")
         end_date = input("End date: ")
 
