@@ -1,7 +1,10 @@
-from utils import tasks_list_file, does_task_exist
+"""Module containing the menu for managing tasks"""
+
+from utils import TASKS_LIST_FILE, does_task_exist
 from utils import format_time, print_table
 
 def create_task(task_name, importance):
+    """Function for creating new tasks"""
     task_exists = does_task_exist(task_name)
 
     if task_exists:
@@ -10,19 +13,20 @@ def create_task(task_name, importance):
 
     target = input("Add a time target to the task in minutes ('0' to skip): ")
 
-    with open(tasks_list_file, "a") as file:
+    with open(TASKS_LIST_FILE, "a", encoding="utf-8") as file:
         file.write(f"{task_name},{importance},0,{target}\n")
 
     print(f"Task '{task_name}' created successfully.")
 
 def delete_task(task_name):
+    """Function for removing existing tasks"""
     task_exists = does_task_exist(task_name)
 
     if not task_exists:
         print(f"Task '{task_name}' does not exist.")
         return
 
-    with open(tasks_list_file, "r") as file:
+    with open(TASKS_LIST_FILE, "r", encoding="utf-8") as file:
         lines = file.readlines()
 
     new_lines = []
@@ -31,23 +35,24 @@ def delete_task(task_name):
         if task_name not in line:
             new_lines.append(line)
 
-    with open(tasks_list_file, "w") as file:
+    with open(TASKS_LIST_FILE, "w", encoding="utf-8") as file:
         file.writelines(new_lines)
 
     print(f"Task '{task_name}' deleted successfully.")
 
 def edit_task(task_name, criteria):
+    """Function for modifying performance or target of a task"""
     task_exists = does_task_exist(task_name)
 
     if not task_exists:
         print(f"Task '{task_name}' does not exist.")
         return
 
-    with open(tasks_list_file, "r") as file:
+    with open(TASKS_LIST_FILE, "r", encoding="utf-8") as file:
         lines = file.readlines()
 
     new_lines = []
-    index = 1 if criteria[0] == "Importance" else 3
+    index = 1 if "Importance" in criteria[0] else 3
 
     for line in lines:
         if task_name in line:
@@ -60,13 +65,14 @@ def edit_task(task_name, criteria):
 
         new_lines.append(line)
 
-    with open(tasks_list_file, "w") as file:
+    with open(TASKS_LIST_FILE, "w", encoding="utf-8") as file:
         file.writelines(new_lines)
 
     print(f"Task '{task_name}' successfully updated with {criteria[0]} at {criteria[1]}.")
 
 def list_all_tasks():
-    with open(tasks_list_file, "r") as file:
+    """Function to list all of the existing tasks"""
+    with open(TASKS_LIST_FILE, "r", encoding="utf-8") as file:
         lines = file.readlines()
 
     table_data = [
@@ -86,30 +92,35 @@ def list_all_tasks():
 
     print_table(table_data)
 
-def TaskManager():
-	option = input("\nTASK MANAGER - Choose an option\n1. Create a new task\n2. Delete an existing task\n3. Edit task importance or time target\n4. List all tasks\nEnter your choice: ")
+def task_manager():
+    """Menu for managing tasks"""
+    list_all_tasks()
 
-	if option == "1":
-		task_name = input("Enter the task name: ")
-		importance = int(input("Enter the importance of the task in integer: "))
+    print("TASK MANAGER - Choose an option")
+    print("1. Create a new task")
+    print("2. Delete an existing task")
+    print("3. Edit task importance or time target")
+    option = input("4. Go back\nEnter your choice: ")
 
-		create_task(task_name, importance)
+    if option == "1":
+        task_name = input("Enter the task name: ")
+        importance = int(input("Enter the importance of the task in integer: "))
 
-	elif option == "2":
-		task_name = input("Enter the task name to delete: ")
-		delete_task(task_name)
+        create_task(task_name, importance)
 
-	elif option == "3":
-		task_name = input("Enter the task name to update: ")
-		choice = input("Enter the criteria to update: \n1. Importance\n2. Time Target\nEnter your choice: ")
+    elif option == "2":
+        task_name = input("Enter the task name to delete: ")
+        delete_task(task_name)
 
-		key = "Importance" if choice == "1" else "Target"
-		value = input(f"Enter the value for {key}: ")
+    elif option == "3":
+        task_name = input("Enter the task name to update: ")
+        print("Enter the criteria to update: ")
+        choice = input("1. Importance\n2. Time Target\nEnter your choice: ")
 
-		edit_task(task_name, [key, value])
+        key = "Importance (number > 0)" if choice == "1" else "Target (in minutes)"
+        value = input(f"Enter the value for {key}: ")
 
-	elif option == "4":
-		list_all_tasks()
+        edit_task(task_name, [key, value])
 
-	else:
-		print("Invalid option.")
+    else:
+        return

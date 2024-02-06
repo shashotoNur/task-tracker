@@ -1,14 +1,19 @@
+"""Module containing the menu for daily tasks"""
+
 import os
-from termplot import Plot
 from datetime import datetime, timedelta
-from utils import tasks_list_file, current_month_file, print_progress_bar, format_time
+
+import plotext as plt
+from utils import TASKS_LIST_FILE, CURRENT_MONTH_FILE, format_time
 from time_tracker import add_time_to_task
+from manage_tasks import list_all_tasks
 
 def get_task_relative_importance(task_name):
+    """Function for getting the importance of a task relative to other tasks"""
     importance = 0
     total_importance = 0
 
-    with open(tasks_list_file, "r") as file:
+    with open(TASKS_LIST_FILE, "r", encoding="utf-8") as file:
         for line in file:
             task_data = line.strip().split(",")
             total_importance += int(task_data[1])
@@ -20,9 +25,10 @@ def get_task_relative_importance(task_name):
 
 
 def update_daily_task(task_name, performance, time):
+    """Function for updating the performance and time of current day's task"""
     current_date = datetime.now().strftime("%d-%m-%Y")
 
-    with open(current_month_file, "r") as file:
+    with open(CURRENT_MONTH_FILE, "r", encoding="utf-8") as file:
         lines = file.readlines()
 
     new_lines = []
@@ -32,7 +38,7 @@ def update_daily_task(task_name, performance, time):
 
     line_to_be_added = f"{task_name},{performance},{time}"
 
-    for lineNumber, line in enumerate(lines):
+    for line_number, line in enumerate(lines):
         new_lines.append(line)
         task_in_line = line.strip().split(",")[0]
 
@@ -44,7 +50,7 @@ def update_daily_task(task_name, performance, time):
             print(f"Performance for today's '{task_name}' is already set.")
             task_is_to_be_written = False
 
-        elif task_is_to_be_written and lineNumber == (len(lines)-1):
+        elif task_is_to_be_written and line_number == (len(lines)-1):
             new_lines.append(f"\n{line_to_be_added}")
             add_time_to_task(task_name, time)
 
@@ -57,11 +63,12 @@ def update_daily_task(task_name, performance, time):
 
         print(f"Performance for task '{task_name}' set successfully.")
 
-    with open(current_month_file, "w") as file:
+    with open(CURRENT_MONTH_FILE, "w", encoding="utf-8") as file:
         file.writelines(new_lines)
 
 
 def display_tasks(date):
+    """Function displaying all the tasks on a particular date"""
     date_object = datetime.strptime(date, "%d-%m-%Y")
     next_date_object = date_object + timedelta(days=1)
 
@@ -69,7 +76,13 @@ def display_tasks(date):
     found_date = False
     tasks_exist = False
 
-    with open(current_month_file, "r") as file:
+    year = date[6:]
+    month = date[3:5]
+    filename = f"tasks_in_{year}_{month}.txt"
+    if not os.path.exists(filename):
+        return print(f"No record on {date} exists.")
+
+    with open(filename, "r", encoding="utf-8") as file:
         lines = file.readlines()
 
     print(f"Tasks on {date}:")
@@ -90,13 +103,21 @@ def display_tasks(date):
             break
 
     if not tasks_exist:
-        print(f"No tasks on {date}.")
+        return print(f"No tasks on {date}.")
+    return print("---")
 
 def get_performance_of_day(date):
+    """Function for getting the overall performance on a day"""
     found_date = False
     collective_performance = 0
 
-    with open(current_month_file, "r") as file:
+    year = date[6:]
+    month = date[3:5]
+    filename = f"tasks_in_{year}_{month}.txt"
+    if not os.path.exists(filename):
+        return 0
+
+    with open(filename, "r", encoding="utf-8") as file:
         lines = file.readlines()
 
     for line in lines:
@@ -114,58 +135,70 @@ def get_performance_of_day(date):
     return round(collective_performance, 2)
 
 def get_performance_of_a_range_of_days(start_date, end_date):
+    """Function for getting the overall performance of a number of days"""
     start_date_obj = datetime.strptime(start_date, '%d-%m-%Y')
     end_date_obj = datetime.strptime(end_date, '%d-%m-%Y')
 
     num_of_days = (end_date_obj - start_date_obj).days + 1
-    dates, perf = [], []
+    dates, performances = [], []
 
     for i in range(num_of_days):
         current_date = start_date_obj + timedelta(days=i)
-        dates.append(int(current_date.strftime("%d")))
+        dates.append(current_date.strftime("%d/%m"))
 
     total_performance = 0
 
     while start_date_obj <= end_date_obj:
         performance = get_performance_of_day(start_date_obj.strftime("%d-%m-%Y"))
-        perf.append(performance)
+        performances.append(performance)
         total_performance += performance
         start_date_obj += timedelta(days=1)
 
-    Plot(dates, perf)
+    if not all(x == 0 for x in performances):
+        plt.simple_bar(dates, performances, width = 100, title = 'Performance Bar')
+        plt.show()
     return total_performance / num_of_days
 
-def DailyTracker():
+def daily_tracker():
+    """Menu for daily tasks"""
     today = datetime.now().strftime("%d-%m-%Y")
     display_tasks(today)
 
-    input("Press enter to continue...")
-
-    option = input("\nDAILY TRACKER - Choose an option:\n1. Set performance and time invested for a task\n2. Get overall performance of a day\n3. Display overall performance within a date range\nEnter your choice: ")
+    print("DAILY TRACKER - Choose an option:")
+    print("1. Set performance and time invested for a task")
+    print("2. Display tasks on a date")
+    print("3. Get overall performance of a day")
+    print("4. Display overall performance within a date range")
+    option = input("5. Go back\nEnter your choice: ")
 
     if option == "1":
+        list_all_tasks()
         task_name = input("Enter the task name: ")
 
         performance = int(input("Enter the performance for the task (0-100): "))
-        time = int(input("Enter the time invested today: "))
+        time = int(input("Enter the time invested today in minutes: "))
 
         update_daily_task(task_name, performance, time)
 
     elif option == "2":
+        date = input("Enter the date you want to view (DD-MM-YYYY): ")
+        display_tasks(date)
+
+    elif option == "3":
         date = input("Enter the date of the performance you want to get (DD-MM-YYYY): ")
         performance = get_performance_of_day(date)
 
-        print(f"Performance on {date}:")
-        print_progress_bar(performance)
+        plt.simple_bar([f"On {date}"], [performance], width = 100, title = 'Overall Performance')
+        plt.show()
 
-    elif option == "3":
-        start_date = input("Start date: ")
-        end_date = input("End date: ")
+    elif option == "4":
+        start_date = input("Start date (DD-MM-YYYY): ")
+        end_date = input("End date (DD-MM-YYYY): ")
 
         performance = get_performance_of_a_range_of_days(start_date, end_date)
 
-        print(f"Overall performance between {start_date} to {end_date}:")
-        print_progress_bar(performance)
+        plt.simple_bar([f"{start_date} to {end_date}"], [performance], width = 100, title = 'Overall Performance')
+        plt.show()
 
     else:
-        print("Invalid option.")
+        return

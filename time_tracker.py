@@ -1,14 +1,17 @@
-from utils import tasks_list_file, does_task_exist
+"""Module containing the menu for tracking time spent"""
+
+from utils import TASKS_LIST_FILE, does_task_exist
 from utils import format_time, print_progress_bar
 
 def add_time_to_task(task_name, time_added):
+    """Function for adding time to a task"""
     task_exists = does_task_exist(task_name)
 
     if not task_exists:
         print(f"Task '{task_name}' does not exist.")
         return
 
-    with open(tasks_list_file, "r") as file:
+    with open(TASKS_LIST_FILE, "r", encoding="utf-8") as file:
         lines = file.readlines()
 
     for line_index, line in enumerate(lines):
@@ -21,22 +24,24 @@ def add_time_to_task(task_name, time_added):
             new_time = current_time + time_added
 
             if new_time >= target and target != 0:
-                print(f"Congratulations! Target time for task '{task_name}' {format_time(target)} has been reached!")
+                print("Congratulations!")
+                print(f"Target time {format_time(target)} has been reached!")
 
-                target = input(f"Set another for task '{task_name}' ('0' to reset): ")
+                target = input("Set another target in minutes ('0' to reset): ")
 
             updated_line = f"{task_name},{importance},{new_time},{target}\n"
             lines[line_index] = updated_line
 
             break
 
-    with open(tasks_list_file, "w") as file:
+    with open(TASKS_LIST_FILE, "w", encoding="utf-8") as file:
         file.writelines(lines)
 
     print(f"Time added to '{task_name}' successfully.")
 
 def display_task_times():
-    with open(tasks_list_file, "r") as file:
+    """Function for displaying the time spent on a task"""
+    with open(TASKS_LIST_FILE, "r", encoding="utf-8") as file:
         lines = file.readlines()
 
     if len(lines) == 0:
@@ -47,10 +52,9 @@ def display_task_times():
 
     for line in lines:
         data = line.strip().split(",")
-        task_name, importance, time_invested, target = data
+        task_name, _, time_invested, target = data
         time_invested = int(time_invested)
         target = int(target)
-
 
         formatted_time = format_time(time_invested)
         if target != 0:
@@ -59,10 +63,12 @@ def display_task_times():
         else:
             print(f"\t- {task_name}: {formatted_time} ")
 
-def TimeTracker():
+def time_tracker():
+    """Menu for tracking collective time across tasks"""
     display_task_times()
 
-    option = input("\nTIME TRACKER - Choose an option\n1. Add time to a task\n2. Display time invested\nEnter your choice: ")
+    print("TIME TRACKER - Choose an option")
+    option = input("1. Add time to a task\n2. Go back\nEnter your choice: ")
 
     if option == "1":
         task_name = input("Enter the task name: ")
@@ -70,8 +76,5 @@ def TimeTracker():
 
         add_time_to_task(task_name, time_added)
 
-    elif option == "2":
-        display_task_times()
-
     else:
-        print("Invalid option.")
+        return

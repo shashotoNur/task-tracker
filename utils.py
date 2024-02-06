@@ -1,10 +1,13 @@
+"""Module containing useful functions"""
+
 from datetime import datetime
 
-tasks_list_file = "tasks_list.txt"
-current_month_file = f"tasks_in_{datetime.now().strftime('%Y_%m')}.txt"
+TASKS_LIST_FILE = "tasks_list.txt"
+CURRENT_MONTH_FILE = f"tasks_in_{datetime.now().strftime('%Y_%m')}.txt"
 
 def does_task_exist(task_name):
-    with open(tasks_list_file, "r") as file:
+    """Checks whether a task actually exists"""
+    with open(TASKS_LIST_FILE, "r", encoding="utf-8") as file:
         lines = file.readlines()
 
     for line in lines:
@@ -14,6 +17,7 @@ def does_task_exist(task_name):
     return False
 
 def format_time(time_in_minutes):
+    """Creates a readable time from minutes"""
     hours = time_in_minutes // 60
     minutes = time_in_minutes % 60
 
@@ -26,6 +30,7 @@ def format_time(time_in_minutes):
     return formatted_time
 
 def print_table(table_data):
+    """Creates a table to print data"""
     column_widths = [max(len(str(item)) for item in col) for col in zip(*table_data)]
 
     title_row = "|".join(f"{{:{width}}}" for width in column_widths)
@@ -39,7 +44,8 @@ def print_table(table_data):
         print(row_str.format(*row))
 
 def print_progress_bar(progress, length=40):
+    """Prints a progress bar"""
     bar_length = int(length * progress/100)
-    bar = "=" * bar_length + "." * (length - bar_length)
+    bars = "=" * bar_length + "." * (length - bar_length)
 
-    print(f"[{bar}] {progress:.2f}%")
+    print(f"[{bars}] {progress:.2f}%")
